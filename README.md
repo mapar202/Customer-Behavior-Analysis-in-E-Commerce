@@ -1,142 +1,148 @@
-# Customer Behavior Analysis in E-Commerce
+# E-Commerce Customer Behavior & RFM Segmentation
 
-This project explores and analyzes real-world e-commerce customer behavior data. The goal is to uncover purchasing patterns, calculate conversion rates, and extract behavioral insights using Python and various data analysis tools.
+This project presents an **end-to-end data analytics and data engineering pipeline** for analyzing large-scale e-commerce behavioral data (~42 million rows).  
+It covers the complete workflow from **exploratory data analysis (EDA)** to **efficient data processing**, **optimized storage**, and **customer segmentation using RFM analysis**.
+
+The project emphasizes **scalability, performance, and clean analytical design**, making it suitable for real-world analytics and data engineering scenarios.
 
 ---
 
 ## 📁 Project Structure
 
-```
 customer-behavior-analysis/
-|
 ├── data/
-│   └── 2019-Oct.csv           # Raw dataset (~42 million rows)
+│ ├── Gold-Data/ # Final RFM segmentation outputs (Parquet)
+│ ├── sample.parquet # 100k-row optimized sample for fast EDA
+│ └── 2019-Oct_chunk.parquet # Optimized full dataset (Silver layer)
+│
 ├── notebooks/
-│   └── 01_data_overview.ipynb # Data overview and cleaning
+│ ├── 00_Initial_EDA.ipynb # Behavioral & temporal exploration
+│ ├── 01_Data_Optimization.ipynb # Memory-efficient CSV → Parquet conversion
+│ └── 02_RFM_Segmentation.ipynb # RFM scoring & customer segmentation
+│
+├── src/
+│ └── Utils.py # Reusable helper functions
+│
 ├── outputs/
-│   └── plots/                 # Saved plots and visuals
-├── requirements.txt          # Python dependencies
-└── README.md                 # This file
-```
+│ └── plots/ # Generated visual insights
+│
+├── requirements.txt # Project dependencies
+└── README.md
 
----
 
-## 📊 Dataset Description
-
-- **Source**: Kaggle - [E-Commerce Behavior Data](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store)
-- **Period**: October 2019
-- **Size**: ~42 million events
-- **Fields**: `event_time`, `event_type`, `product_id`, `category_id`, `user_id`, `user_session`
-<br><br>
----
-
-## 🔧 Technologies Used
-
-- Python 3.10
-- pandas
-- numpy
-- matplotlib
-- seaborn
-- Jupyter Notebook
-- VS Code
-<br><br>
 ---
 
 ## 📈 Project Workflow
 
-### 1. Project Setup
+### 1. Exploratory Data Analysis  
+**Notebook:** `00_Initial_EDA.ipynb`
 
-- Created folder structure (`data/`, `notebooks/`, `outputs/plots/`)
-- Created virtual environment `venv`
-- Installed necessary packages and created `requirements.txt`
+This notebook provides an initial understanding of customer behavior and purchasing patterns.
 
-### 2. Initial Data Exploration (`01_data_overview.ipynb`)
+**Key analyses include:**
+- Conversion funnel analysis (view → purchase)
+- Temporal trends such as peak shopping hours and active weekdays
+- Distribution of user activity and events
 
-- Loaded dataset from `2019-Oct.csv`
-- Reviewed data dimensions, column types, and sample rows
-
-### 3. Data Cleaning: Handling Missing Values, Duplicates, and Formatting (`01_data_overview.ipynb`)
--  Checked for missing (null) values and applied appropriate handling strategies.
--  Identified and removed duplicate records.
--  Analyzed the number of unique values in key columns. to assess data integrity.
--  Extracted date and hour components from the event_time column for further analysis.
-
-### 4. Exploratory Data Analysis - EDA
-  - Number of unique users for each event type 
-   
-  - Event Distribution Over the Day<br>
-       - Grouped and counted all events per hour
-       - Plotted using a line chart with `pandas.plot()`
-        ![Distribution of Event Types](/outputs/plots/evetType_distrb.png)
-  - Most popular product categories (Top 10)
-       - ![Distribution of Event Types](/outputs/plots/Top_10_Product_Categories.png)
-  - Event Distribution Over the Day
-       - Grouped and counted all events per hour
-        ![Distribution of Event Types](/outputs/plots/event_per_hour.png)
-  - Conversion Rate Analysis <br>
-      - Calculated relative frequency of `event_type` values (e.g., view, cart, purchase)
-      - Calculated conversion rate from views to purchases:
-    ```python
-    conversion_rate = (purchase_count / view_count) * 100
-    ```
-
-### 5. Analyze Customer Buying Patterns
-- Top 10 Hours for Purchases
-   - Filtered the dataset to include only records where `event_type` is "purchase".
-   - Grouped the data by event_hour to calculate the total number of purchases per hour.<br>
-   - Visualized the top 10 purchasing hours using `seaborn.barplot` and `plt.bar` from `matplotlib.pyplot` 
-  
-  ![Distribution of Event Types](/outputs/plots/10_top_shopping_hours.png)
-<br>
-<br>
-<br>
-
+**Performance optimization:**
+- Refactored to use `sample.parquet` instead of the full 6GB dataset
+- Enables fast execution while preserving analytical validity
 
 ---
 
+### 2. Data Engineering & Optimization  
+**Notebook:** `01_Data_Optimization.ipynb`
 
+This step addresses the challenge of processing **42 million rows** of raw event data efficiently.
 
-## 🚀 How to Run This Project
+**Key techniques:**
+- Chunk-based processing (500k rows per chunk) to control memory usage
+- Data type downcasting (e.g., `int32`, `float32`)
+- Timestamp standardization and missing value handling using categorical encoding
 
-1. Clone the repository:
+**Storage optimization:**
+- Converted raw CSV files to **Apache Parquet** format with **Snappy compression**
+- Achieved approximately **75% reduction in storage size**
+- Established a clean and optimized **Silver data layer**
 
+---
+
+### 3. RFM Segmentation  
+**Notebook:** `02_RFM_Segmentation.ipynb`
+
+This notebook transforms raw behavioral events into **actionable customer insights** using RFM analysis.
+
+**RFM metrics calculated per user:**
+- **Recency:** Time since last purchase
+- **Frequency:** Number of purchase events
+- **Monetary:** Total spending
+
+**Hybrid scoring approach:**
+- **Recency:** Business-rule-based binning using `pd.cut`
+- **Frequency & Monetary:** Quantile-based scoring using `pd.qcut`
+
+**Customer segments include:**
+- Champions  
+- Loyal Customers  
+- At Risk  
+- Hibernating  
+
+Final results are stored as **Gold-layer Parquet files**, ready for BI tools or further analytics.
+
+---
+
+## 🛠 Modular Utilities (`src/Utils.py`)
+
+To improve code readability and maintainability, repetitive logic is centralized in `Utils.py`.
+
+**Example utility:**
+- `save_plot()`  
+  - Standardizes plot exports  
+  - Automatically creates output directories  
+  - Saves high-resolution, publication-ready figures  
+
+This approach follows **DRY (Don’t Repeat Yourself)** and clean code principles.
+
+---
+
+## 🔧 Technologies Used
+
+- **Programming:** Python  
+- **Data Processing:** Pandas, NumPy  
+- **Storage & Performance:** Apache Parquet, PyArrow  
+- **Visualization:** Matplotlib, Seaborn  
+- **Data Profiling:** ydata-profiling  
+
+---
+
+## 📊 Project Evolution & Key Learnings
+
+This project reflects a clear progression in data analytics and data engineering practices:
+
+- Improved scalability through chunk-based processing
+- Significant I/O performance gains by adopting Parquet
+- Reduced memory footprint and faster execution times
+- Cleaner, more modular code through reusable utilities
+
+---
+
+## ▶️ How to Run the Project
+
+1. **Clone the repository**
 ```bash
-git clone https://github.com/YOUR_USERNAME/customer-behavior-analysis.git
+git clone <repository-url>
 cd customer-behavior-analysis
-```
 
-2. Create and activate a virtual environment:
+2. Install dependencies
 
-```bash
-python -m venv venv
-# On Windows:
-venv\Scripts\activate
-# On macOS/Linux:
-source venv/bin/activate
-```
-
-3. Install the required packages:
-
-```bash
 pip install -r requirements.txt
-```
-
-4. Run the Jupyter notebook:
-
-```bash
-jupyter notebook
-```
-<br><br>
----
-
-## 📌 Next Steps
-
-- Create a second notebook: cart analysis
-- Perform user and session analysis
-- Improve visualizations and save plots in `outputs/plots/`
-- Release version 2.0 with improvements and new features
 
 
----
+3. Download the dataset
+Place 2019-Oct.csv inside the data/ directory.
 
-> To view the charts and analysis, please open the notebook `01_data_overview.ipynb` in the `notebooks/` folder.
+4. Run the pipeline
+
+Execute 01_Data_Optimization.ipynb to generate optimized Parquet files
+
+Run 02_RFM_Segmentation.ipynb to produce final customer segments
