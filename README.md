@@ -9,6 +9,7 @@ The project emphasizes **scalability, performance, and clean analytical design**
 
 ## 📁 Project Structure
 
+```
 customer-behavior-analysis/
 ├── data/
 │ ├── Gold-Data/ # Final RFM segmentation outputs (Parquet)
@@ -28,7 +29,7 @@ customer-behavior-analysis/
 │
 ├── requirements.txt # Project dependencies
 └── README.md
-
+```
 
 ---
 
