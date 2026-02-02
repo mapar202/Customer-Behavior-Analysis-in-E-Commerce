@@ -1,6 +1,6 @@
 # E-Commerce Customer Behavior & RFM Segmentation
 
-This project presents an **end-to-end data analytics and data engineering pipeline** for analyzing large-scale e-commerce behavioral data (~42 million rows).  
+This project presents an **end-to-end data analytics and data engineering pipeline** for analyzing large-scale e-commerce behavioral data (~42 million rows). 
 It covers the complete workflow from **exploratory data analysis (EDA)** to **efficient data processing**, **optimized storage**, and **customer segmentation using RFM analysis**.
 
 The project emphasizes **scalability, performance, and clean analytical design**, making it suitable for real-world analytics and data engineering scenarios.
@@ -91,6 +91,40 @@ This notebook transforms raw behavioral events into **actionable customer insigh
 Final results are stored as **Gold-layer Parquet files**, ready for BI tools or further analytics.
 
 ---
+### 4. Advanced Visualization & Business Branding
+**Notebook:** `03_RFM_Visualization.ipynb`  
+The final stage focuses on executive-level reporting and communicating complex data insights through professional branding.
+
+**Key Technical Implementations:**
+- **Semantic Branding**: Implementation of a custom color palette to represent segment health (e.g., Deep Green for high-value *Champions*, Burnt Orange for *At-Risk*).
+- **Logarithmic Scaling**: Applied to both Scatter and Bar charts to handle extreme variance in spending ($2M vs $136M) and ensure all segments are visible.
+- **Z-Order Layering**: Strategic data sorting (`ascending=False`) during plotting to ensure high-priority points (Champions) are never obscured by other layers.
+- **Executive Reporting**: 
+    - Inclusion of **Median Thresholds** to define business quadrants.
+    - Automated plot saving with high-resolution output for stakeholders.
+
+---
+### 📊 Key Visualizations
+
+#### 1. Strategic Segmentation (RFM Scatter Plot)
+This plot identifies the boundaries between customer segments using log-scaling and median thresholds.
+![RFM Scatter Plot](outputs/plots/rfm_scatter_analysis.png)
+
+#### 2. Revenue Contribution (Bar Chart)
+A financial breakdown showing how the Champions segment drives the majority of total revenue.
+![Revenue Bar Chart](outputs/plots/revenue_per_segment_bar.png)
+---
+
+## 💡 Strategic Business Findings
+
+Based on the final analytical models, these are the top 3 financial insights extracted from the data:
+
+* **The Revenue Anchor**: The **Champions** segment, while not necessarily the largest in customer count, acts as the primary revenue engine, contributing **$136.1 Million**. This highlights a high dependency on top-tier customer retention for business stability.
+* **The "Hidden" Opportunity in At-Risk**: There is approximately **$35 Million** in "Locked Revenue" within the **At-Risk** segment. Successfully moving just 10% of these customers back to the **Loyal** category could result in a **$3.5 Million** immediate revenue boost.
+* **Cost-Efficient Focus**: The **Hibernating** segment contributes only **$2 Million** (less than 1.5% of Champions). This insight suggests that the marketing budget should be heavily skewed toward **Champions** and **Loyal** segments, with only low-cost, automated re-engagement for Hibernating users.
+
+---
+
 
 ## 🛠 Modular Utilities (`src/Utils.py`)
 
