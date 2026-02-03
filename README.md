@@ -112,6 +112,7 @@ This plot identifies the boundaries between customer segments using log-scaling 
 
 #### 2. Revenue Contribution (Bar Chart)
 A financial breakdown showing how the Champions segment drives the majority of total revenue.
+
 ![Revenue Bar Chart](outputs/plots/revenue_per_segment_bar.png)
 ---
 
