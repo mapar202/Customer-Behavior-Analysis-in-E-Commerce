@@ -12,3 +12,6 @@ data/
 .vs/
 .vscode/
 .DS_Store
+
+# Ignore ML models
+models/*.pkl

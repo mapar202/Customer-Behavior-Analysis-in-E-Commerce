@@ -1,9 +1,10 @@
-# E-Commerce Customer Behavior & RFM Segmentation
 
-This project presents an **end-to-end data analytics and data engineering pipeline** for analyzing large-scale e-commerce behavioral data (~42 million rows). 
-It covers the complete workflow from **exploratory data analysis (EDA)** to **efficient data processing**, **optimized storage**, and **customer segmentation using RFM analysis**.
+# 🛒 E-Commerce Customer Behavior: From RFM Analytics to Churn Prediction
 
-The project emphasizes **scalability, performance, and clean analytical design**, making it suitable for real-world analytics and data engineering scenarios.
+This project presents an **end-to-end data science pipeline** for large-scale e-commerce data (~42M rows).
+ It evolves from **efficient data engineering** and **RFM segmentation** to building a **Machine Learning model** that predicts customer churn with high precision.
+
+The project emphasizes **scalability**, **Medallion Architecture**, and **business-driven model optimization**.
 
 ---
 
@@ -12,14 +13,19 @@ The project emphasizes **scalability, performance, and clean analytical design**
 ```
 customer-behavior-analysis/
 ├── data/
-│ ├── Gold-Data/ # Final RFM segmentation outputs (Parquet)
-│ ├── sample.parquet # 100k-row optimized sample for fast EDA
-│ └── 2019-Oct_chunk.parquet # Optimized full dataset (Silver layer)
+│   ├── Bronze/          # Raw event data (initial ingestion)
+│   ├── Silver/          # Optimized & cleaned Parquet files
+│   └── Gold/            # Final ML-ready datasets & RFM segments
+├── models/
+│   └── churn_rf_v1.pkl  # Trained Random Forest model
 │
 ├── notebooks/
 │ ├── 00_Initial_EDA.ipynb # Behavioral & temporal exploration
 │ ├── 01_Data_Optimization.ipynb # Memory-efficient CSV → Parquet conversion
-│ └── 02_RFM_Segmentation.ipynb # RFM scoring & customer segmentation
+│ ├── 02_RFM_Segmentation.ipynb # RFM scoring & customer segmentation
+│ ├── 03_Customer_Segmentation_RFM.ipynb # RFM metric calculation & rule-based customer grouping
+│ ├── 04_RFM_Visualization.ipynb      # Semantic branding & executive reporting with log-scaling
+│ └── 05_Predictive_Churn_Modeling.ipynb # Feature engineering & Random Forest training for retention
 │
 ├── src/
 │ └── Utils.py # Reusable helper functions
@@ -33,75 +39,26 @@ customer-behavior-analysis/
 
 ---
 
-## 📈 Project Workflow
+## 📈 Pipeline Evolution: From Engineering to Prediction
 
-### 1. Exploratory Data Analysis  
-**Notebook:** `00_Initial_EDA.ipynb`
+### 1. Data Engineering & Optimization (Silver Layer)
+* **Challenge:** Processing **42 million rows** of raw event data efficiently without crashing memory.
+* **Techniques:** Implemented **chunk-based processing** (500k rows/chunk), data type **downcasting**, and timestamp standardization.
+* **Storage:** Converted raw CSVs to **Apache Parquet** with Snappy compression, achieving a **75% reduction in size** and significantly faster I/O.
 
-This notebook provides an initial understanding of customer behavior and purchasing patterns.
+### 2. Behavioral Segmentation & ML Preparedness (Gold Layer)
+* **Method:** Applied **RFM (Recency, Frequency, Monetary) Analysis** to transform millions of raw events into actionable customer segments.
+* **Outputs:** * `rfm_segmentation.parquet`: Final customer segments for BI and marketing analytics.
+    * `churn_model_dataset.parquet`: A refined, feature-engineered dataset specifically optimized for Machine Learning training.
+* **Strategic Findings:** Discovered that **Champions** drive **$136.1M** in revenue, while **$35M** is "locked" in **At-Risk** customers.
+* **Branding:** Developed a custom semantic color palette and used logarithmic scaling for executive-level reporting.
 
-**Key analyses include:**
-- Conversion funnel analysis (view → purchase)
-- Temporal trends such as peak shopping hours and active weekdays
-- Distribution of user activity and events
+### 3. Predictive Modeling (Churn Prediction) 🚀
+The final stage transforms historical behavior into predictive power using a **Random Forest Classifier**.
 
-**Performance optimization:**
-- Refactored to use `sample.parquet` instead of the full 6GB dataset
-- Enables fast execution while preserving analytical validity
-
----
-
-### 2. Data Engineering & Optimization  
-**Notebook:** `01_Data_Optimization.ipynb`
-
-This step addresses the challenge of processing **42 million rows** of raw event data efficiently.
-
-**Key techniques:**
-- Chunk-based processing (500k rows per chunk) to control memory usage
-- Data type downcasting (e.g., `int32`, `float32`)
-- Timestamp standardization and missing value handling using categorical encoding
-
-**Storage optimization:**
-- Converted raw CSV files to **Apache Parquet** format with **Snappy compression**
-- Achieved approximately **75% reduction in storage size**
-- Established a clean and optimized **Silver data layer**
-
----
-
-### 3. RFM Segmentation  
-**Notebook:** `02_RFM_Segmentation.ipynb`
-
-This notebook transforms raw behavioral events into **actionable customer insights** using RFM analysis.
-
-**RFM metrics calculated per user:**
-- **Recency:** Time since last purchase
-- **Frequency:** Number of purchase events
-- **Monetary:** Total spending
-
-**Hybrid scoring approach:**
-- **Recency:** Business-rule-based binning using `pd.cut`
-- **Frequency & Monetary:** Quantile-based scoring using `pd.qcut`
-
-**Customer segments include:**
-- Champions  
-- Loyal Customers  
-- At Risk  
-- Hibernating  
-
-Final results are stored as **Gold-layer Parquet files**, ready for BI tools or further analytics.
-
----
-### 4. Advanced Visualization & Business Branding
-**Notebook:** `03_RFM_Visualization.ipynb`  
-The final stage focuses on executive-level reporting and communicating complex data insights through professional branding.
-
-**Key Technical Implementations:**
-- **Semantic Branding**: Implementation of a custom color palette to represent segment health (e.g., Deep Green for high-value *Champions*, Burnt Orange for *At-Risk*).
-- **Logarithmic Scaling**: Applied to both Scatter and Bar charts to handle extreme variance in spending ($2M vs $136M) and ensure all segments are visible.
-- **Z-Order Layering**: Strategic data sorting (`ascending=False`) during plotting to ensure high-priority points (Champions) are never obscured by other layers.
-- **Executive Reporting**: 
-    - Inclusion of **Median Thresholds** to define business quadrants.
-    - Automated plot saving with high-resolution output for stakeholders.
+* **Targeting:** Focused strictly on "Buyers" to identify retention patterns for high-value customers.
+* **Solving the Bias:** Identified an artificial dependency on `total_spend` (caused by long electronics purchase cycles). Optimized the model by shifting focus to **behavioral features** like `conversion_rate` and `recency`.
+* **Performance:** Improved accuracy from **69% to 71%**, achieving a **75% Churn Recall** (identifying 3 out of 4 potential churners).
 
 ---
 ### 📊 Key Visualizations
@@ -113,15 +70,22 @@ This plot identifies the boundaries between customer segments using log-scaling 
 #### 2. Revenue Contribution (Bar Chart)
 A financial breakdown showing how the Champions segment drives the majority of total revenue.
 ![Revenue Bar Chart](outputs/plots/revenue_per_segment_bar.png)
+
+#### 3. Churn Feature Importance (Optimized)
+After removing price-bias, the model focuses on behavioral engagement.
+![Churn Importance](outputs/plots/churn_importance_optimized.png) 
+*(Note: Conversion Rate and Recency are the primary drivers of churn prediction)*
+
 ---
 
-## 💡 Strategic Business Findings
+## 💡 Business Impact & Strategic Insights
 
-Based on the final analytical models, these are the top 3 financial insights extracted from the data:
+By converting raw behavioral data into actionable intelligence, this project provides three key pillars for revenue growth:
 
-* **The Revenue Anchor**: The **Champions** segment, while not necessarily the largest in customer count, acts as the primary revenue engine, contributing **$136.1 Million**. This highlights a high dependency on top-tier customer retention for business stability.
-* **The "Hidden" Opportunity in At-Risk**: There is approximately **$35 Million** in "Locked Revenue" within the **At-Risk** segment. Successfully moving just 10% of these customers back to the **Loyal** category could result in a **$3.5 Million** immediate revenue boost.
-* **Cost-Efficient Focus**: The **Hibernating** segment contributes only **$2 Million** (less than 1.5% of Champions). This insight suggests that the marketing budget should be heavily skewed toward **Champions** and **Loyal** segments, with only low-cost, automated re-engagement for Hibernating users.
+* **High-Precision Retention:** The Churn Prediction model identifies **75% of at-risk customers** before they leave. Implementing targeted recovery campaigns for these users can directly protect a significant portion of the platform's recurring revenue.
+* **Revenue Optimization:** Analysis revealed that the **Champions** segment acts as the primary revenue engine, contributing **$136.1 Million**. This data justifies a shift in marketing budget to prioritize high-value retention over low-ROI acquisition.
+* **Unlocking "Hidden" Capital:** There is approximately **$35 Million** in "Locked Revenue" within the **At-Risk** segment. A data-driven re-engagement strategy aiming to convert just 10% of these users could result in an immediate **$3.5 Million revenue boost**.
+* **Cost-Efficiency:** Data proves the **Hibernating** segment contributes less than 1.5% of total revenue ($2M). We recommend automating these interactions with low-cost tools to save operational budget for high-impact segments.
 
 ---
 
@@ -140,24 +104,27 @@ This approach follows **DRY (Don’t Repeat Yourself)** and clean code principle
 
 ---
 
-## 🔧 Technologies Used
-
-- **Programming:** Python  
-- **Data Processing:** Pandas, NumPy  
-- **Storage & Performance:** Apache Parquet, PyArrow  
-- **Visualization:** Matplotlib, Seaborn  
-- **Data Profiling:** ydata-profiling  
+## 🛠 Tech Stack & Skills
+- **Data Engineering:** Parquet, Snappy Compression, Chunking, Medallion Architecture.
+- **Machine Learning:** Scikit-Learn (Random Forest), Feature Engineering, Hyperparameter Tuning.
+- **Analytics:** RFM Modeling, Conversion Funnels, Temporal Trends.
+- **Tools:** Python (Pandas, NumPy), Matplotlib, Seaborn, Joblib. 
 
 ---
 
 ## 📊 Project Evolution & Key Learnings
 
-This project reflects a clear progression in data analytics and data engineering practices:
+This project reflects a clear progression from basic data processing to advanced predictive modeling:
 
-- Improved scalability through chunk-based processing
-- Significant I/O performance gains by adopting Parquet
-- Reduced memory footprint and faster execution times
-- Cleaner, more modular code through reusable utilities
+Scalability & Performance: Transitioned from memory-intensive CSV processing to high-speed Parquet I/O and chunk-based ingestion, handling 40M+ rows efficiently.
+
+Medallion Architecture: Implemented a structured data pipeline (Bronze ➔ Silver ➔ Gold) to ensure data quality and lineage throughout the analysis.
+
+Bias Mitigation in ML: Identified and resolved model bias by removing leakage-prone features (like total_spend), increasing prediction reliability for high-value electronics.
+
+Temporal Validation: Developed a robust churn labeling system using Time-based Splitting to simulate real-world forecasting and prevent data leakage.
+
+Production Readiness: Developed modular code with model serialization (Pickling) for future inference and automated directory management.
 
 ---
 
@@ -177,7 +144,8 @@ pip install -r requirements.txt
 Place 2019-Oct.csv inside the data/ directory.
 
 4. Run the pipeline
+- Execute `01_Data_Optimization.ipynb` to generate optimized Parquet files.
+- Run `02_RFM_Segmentation.ipynb` to produce customer segments.
+- Run `05_Predictive_Churn_Modeling.ipynb` to train and save the predictive model.
 
-Execute 01_Data_Optimization.ipynb to generate optimized Parquet files
-
-Run 02_RFM_Segmentation.ipynb to produce final customer segments
+> 💡 Note: The pre-trained model file (.pkl) is excluded from this repo due to size. You can generate it locally by running 05_Predictive_Churn_Modeling.ipynb.
