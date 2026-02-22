@@ -22,3 +22,9 @@ data/archive/2019-Nov.csv
 data/archive/2019-Oct.csv
 data/sample.parquet
 models/churn_rf_v1.pkl
+
+# Removed large gold datasets
+/data/Gold/churn_model_dataset.parquet
+/data/Gold/rfm_report_2026-01-26.parquet
+/data/Gold/rfm_report_2026-01-28.parquet
+
