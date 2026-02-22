@@ -14,4 +14,11 @@ data/
 .DS_Store
 
 # Ignore ML models
-models/*.pkl
+models/*.pkl# Large data/models
+data/Bronze/2019-Oct.csv
+data/Silver/2019-Oct-Refined.parquet
+data/Silver/2019-Oct_chunk.parquet
+data/archive/2019-Nov.csv
+data/archive/2019-Oct.csv
+data/sample.parquet
+models/churn_rf_v1.pkl
