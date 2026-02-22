@@ -11,6 +11,7 @@ The project emphasizes **scalability**, **Medallion Architecture**, and **busine
 ## 📁 Project Structure
 
 ```
+```
 customer-behavior-analysis/
 ├── data/
 │   ├── Bronze/          # Raw event data (initial ingestion)
@@ -35,6 +36,7 @@ customer-behavior-analysis/
 │
 ├── requirements.txt # Project dependencies
 └── README.md
+```
 ```
 
 ---
