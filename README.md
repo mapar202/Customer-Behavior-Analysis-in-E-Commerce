@@ -140,9 +140,10 @@ cd customer-behavior-analysis
 
 pip install -r requirements.txt
 
-
-3. Download the dataset
-Place 2019-Oct.csv inside the data/ directory.
+3. Download the Dataset
+Due to GitHub's file size limitations, the raw dataset is not included in this repository.
+- Download the `2019-Oct.csv` file from the [eCommerce behavior data on Kaggle](https://www.kaggle.com/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store?select=2019-Oct.csv).
+- Place the file inside the `data/` directory before running the notebooks.
 
 4. Run the pipeline
 - Execute `01_Data_Optimization.ipynb` to generate optimized Parquet files.
